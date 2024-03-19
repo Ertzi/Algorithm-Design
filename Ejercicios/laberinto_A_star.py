@@ -2,8 +2,8 @@ import pygame
 import numpy as np
 
 # Dimensiones de la cuadrícula
-n = 15  # Tamaño de la cuadrícula (nxn)
-grid_size = 50  # Tamaño de cada cuadrado en píxeles
+n = 30  # Tamaño de la cuadrícula (nxn)
+grid_size = 20  # Tamaño de cada cuadrado en píxeles
 width, height = n * grid_size, n * grid_size
 
 # Inicializar Pygame
@@ -14,8 +14,8 @@ pygame.display.set_caption("Dibujar Cuadrícula")
 # Colores
 WHITE = (238,238,210)
 BLACK = (186,202,68)
-GRID_COLOR = (200, 200, 200)  # Color de fondo de la cuadrícula
-MARKED_COLOR_START = (255, 255, 255)     # Color para las posiciones marcadas
+GRID_COLOR = (200, 200, 200) # Color de fondo de la cuadrícula
+MARKED_COLOR_START = (255, 255, 255) # Color para las posiciones marcadas
 MARKED_COLOR_END = (255, 0, 0) 
 
 # Crear matriz para almacenar el estado de los cuadrados
@@ -34,7 +34,7 @@ def draw_grid():
             pygame.draw.rect(screen, color, (j * grid_size, i * grid_size, grid_size, grid_size))
             pygame.draw.rect(screen, GRID_COLOR, (j * grid_size, i * grid_size, grid_size, grid_size), 1)
 
-def main():
+def generate_matrix():
     running = True
     drawing = False
 
@@ -64,84 +64,167 @@ def main():
     # Devolver la matriz de estado final
     return grid_state
 
-if __name__ == "__main__":
-    final_grid_state = main()
-    # print("Matriz final:")
-    # print(final_grid_state)
-    # print(final_grid_state.tolist())
+M = generate_matrix()
 
-M = [[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 
-1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1], [0, 0, 0, 1, 0, 1, 0, 1, 0, 
-1, 0, 1, 0, 1, 1], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]]
 
-def heuristico(c,n):
-    """
-    El heuristico será la distancia de Manhattan
-    """
-    x,y = c[-1]
-    return len(c)-1 + abs(n-1 - x) + abs(n-1 - y)
 
-def dentro_del_tablero(posicion,n):
+
+
+
+
+
+
+
+
+
+
+
+
+# Ejemplo y ALGORITMO:
+
+# M = [ [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+#     [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0],
+#     [1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+#     [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+#     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+#     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+#     [0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+#     [0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+#     [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+#     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]]
+
+print(np.array(M))
+
+def heuristico(posicion,n):
+    return (n-posicion[0]) + (n-posicion[1])
+
+def calcular_f(c,n):
+    return (len(c)-1) + heuristico(c[-1],n)
+
+def esta_dentro_del_tablero(posicion,n):
     return ( 0 <= posicion[0] ) and (posicion[0] < n) and ( 0 <= posicion[1] ) and (posicion[1] < n)
 
-def sucesores(c,mapa,f_min):
-    movimientos = [(0,1),(1,0),(0,-1),(-1,0)] # Para encontrar los sucesores
-    sucesores = []
-    x,y = c[-1]
+def no_choca_con_borde(nuevo_movimiento,mapa):
+    x,y = nuevo_movimiento
+    return mapa[x][y] != 1
+
+def sucesores(c_min,mapa,visitados,g_visitados,A,f,n):
+    movimientos = [(1,0),(0,1),(-1,0),(0,-1)]
+    x,y = c_min[-1]
     for dx,dy in movimientos:
-        x_new, y_new = x + dx, y + dy
-        if dentro_del_tablero((x_new,y_new),n) and not((x_new,y_new) in c) and mapa[x_new][y_new] != 1: # No dejamos al algoritmo volver atrás
-            heur = heuristico(c + [(x_new,y_new)],n)
-            if heur <= f_min:
-                sucesores.append((c + [(x_new,y_new)],heur))
-    print(f"c =\n [{c}, {f_min}]")
-    print(f"sucesores = \n{sucesores}")
-    print("\n")
-    return sucesores
-
-def argmin(A):
-    c = []
-    f_c = float("inf")
-    for list,value in A:
-        print(f"list = {list}")
-        print(f"value = {value}")
-        print(f"Desigualdad: {value < f_c}")
-        if value < f_c:
-            c = list
-            f_c = value
-    return c,f_c
-
-def A_star(mapa):
+        nuevo_movimiento = (x+dx,y+dy)
+        if esta_dentro_del_tablero(nuevo_movimiento,n) and no_choca_con_borde(nuevo_movimiento,mapa) and nuevo_movimiento not in c_min and nuevo_movimiento not in visitados:
+            A.append(c_min + [nuevo_movimiento])
+            visitados.append(nuevo_movimiento)
+            g_visitados.append(len(c_min)-1)
+            f.append(calcular_f(c_min + [nuevo_movimiento],n))
+        
+        elif esta_dentro_del_tablero(nuevo_movimiento,n) and no_choca_con_borde(nuevo_movimiento,mapa) and nuevo_movimiento not in c_min and nuevo_movimiento in visitados:
+            indice_visitados = visitados.index(nuevo_movimiento)
+            if len(c_min) < g_visitados[indice_visitados]:
+                g_visitados[indice_visitados] = len(c_min)
+                A.append(c_min + [nuevo_movimiento])
+                f.append(calcular_f(c_min + [nuevo_movimiento],n))
+            
+def A_star(mapa,n):
     
-    A = [ ( [(0,0)]  , abs(n-1 - 0) + abs(n-1 -0) ) ] # Lista de tuplas
-    f_min = float("inf")
+    visitados = [(0,0)] # Importa el orden
+    g_visitados = [0] # Importa el orden
+    A = [ [(0,0)] ] # Lista de listas (caminos), importa el orden
+    f = [ calcular_f(A[0],n) ]
+    sol = None # Solucion temporal
+    f_sol = float("inf") # Distancia de la mejor solucion hasta el momento (como no
+    # tenemos soluciones lo definiremos como infinito)
+    
+    while A != []:
+        min_index = np.argmin(f)
+        c_min = A[min_index]
+        f_c_min = f[min_index]
+        A.pop(min_index)
+        f.pop(min_index)
+        if c_min[-1] == (n-1,n-1) and f_c_min < f_sol: # Si es una solución mejor a la que ya tenemos
+            # Actualizar solucion y coste minimo:
+            sol = c_min[:]
+            f_sol = f_c_min
+            # Podar:
+            indices_para_podar = []
+            for i,f_i in enumerate(f):
+                if f_i > f_sol:
+                    indices_para_podar.append(i)
+            A = [camino for indice,camino in enumerate(A) if indice not in indices_para_podar]
+            f = [valor_f for indice, valor_f in enumerate(f) if indice not in indices_para_podar]
 
-    while A != [] and len(A) <20:
-        c,f_c = argmin(A)
-        # print(f"c = {c}")
-        # print(f"f_c = {f_c}")
-        if c[-1] == (n-1,n-1) and f_c < f_min:
-            sol = c
-            f_min = f_c
-            print("SOLUCION")
-            indices_para_eliminar = []
-            for i in range(len(A)):
-                camino = A[i][0]
-                f = A[i][1]
-                if f > f_min:
-                    indices_para_eliminar.append(i)
-            indices_para_eliminar.sort(reverse=True)
-            for indice in indices_para_eliminar:
-                A.pop[indice]
-        else:
-            A = A + sucesores(c,mapa,f_min)
-        
-        i = A.index((c,f_c))
-        A.pop(i)
-        
-    return sol, f_min
-        
+        else: # Si no es solución o es peor que la que ya tenemos
+            sucesores(c_min,mapa,visitados,g_visitados,A,f,n) # La función modificará las listas A, visitados y g_visitados
+    
 
-sol, f = A_star(M)
+    return sol, f_sol
+
+
+sol, f = A_star(M,len(M[0]))
 print(f"Solucion: {sol}")
 print(f"f = {f}")
+
+
+for x,y in sol:
+    M[x][y] = 2
+
+
+M = np.array(M)
+print(M)
+
+
+
+
+
+
+
+
+
+
+
+
+# Dibujar
+
+# Inicializar Pygame
+pygame.init()
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Dibujar Cuadrícula")
+
+# Colores
+# Color de fondo de la cuadrícula
+MARKED_COLOR = (65, 43,21)     # Color para las posiciones marcadas
+
+def draw_grid(grid):
+    screen.fill(GRID_COLOR)  # Rellenar el fondo con el color de la cuadrícula
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                color = BLACK
+            elif grid[i][j] == 2:
+                color = MARKED_COLOR
+            else:
+                color = WHITE
+            pygame.draw.rect(screen, color, (j * grid_size, i * grid_size, grid_size, grid_size))
+            pygame.draw.rect(screen, GRID_COLOR, (j * grid_size, i * grid_size, grid_size, grid_size), 1)
+
+def main():
+    running = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        draw_grid(M)
+        pygame.display.flip()
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
