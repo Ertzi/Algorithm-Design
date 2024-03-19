@@ -2,9 +2,13 @@ import pygame
 import numpy as np
 
 # Dimensiones de la cuadrícula
-n = 30  # Tamaño de la cuadrícula (nxn)
-grid_size = 20  # Tamaño de cada cuadrado en píxeles
+n = 50  # Tamaño de la cuadrícula (nxn)
+grid_size = 15  # Tamaño de cada cuadrado en píxeles
 width, height = n * grid_size, n * grid_size
+
+dibujar_nodos_visitados = True
+
+
 
 # Inicializar Pygame
 pygame.init()
@@ -165,27 +169,29 @@ def no_choca_con_borde(nuevo_movimiento,mapa):
     x,y = nuevo_movimiento
     return mapa[x][y] != 1
 
-def sucesores(c_min,mapa,visitados,g_visitados,A,f,n,posicion_final):
+def sucesores(c_min,mapa,visitados,g_visitados,A,f,n,posicion_final,f_sol):
     movimientos = [(1,0),(0,1),(-1,0),(0,-1)]
     x,y = c_min[-1]
     for dx,dy in movimientos:
         nuevo_movimiento = (x+dx,y+dy)
         if esta_dentro_del_tablero(nuevo_movimiento,n) and no_choca_con_borde(nuevo_movimiento,mapa) and nuevo_movimiento not in c_min and nuevo_movimiento not in visitados:
-            A.append(c_min + [nuevo_movimiento])
-            visitados.append(nuevo_movimiento)
-            g_visitados.append(len(c_min)-1)
-            f.append(calcular_f(c_min + [nuevo_movimiento],posicion_final))
+            if calcular_f(c_min + [nuevo_movimiento],posicion_final) <= f_sol:
+                A.append(c_min + [nuevo_movimiento])
+                visitados.append(nuevo_movimiento)
+                g_visitados.append(len(c_min))
+                f.append(calcular_f(c_min + [nuevo_movimiento],posicion_final))
         
         elif esta_dentro_del_tablero(nuevo_movimiento,n) and no_choca_con_borde(nuevo_movimiento,mapa) and nuevo_movimiento not in c_min and nuevo_movimiento in visitados:
             indice_visitados = visitados.index(nuevo_movimiento)
-            if len(c_min) < g_visitados[indice_visitados]:
+            if len(c_min) < g_visitados[indice_visitados] and calcular_f(c_min + [nuevo_movimiento],posicion_final) <= f_sol:
                 g_visitados[indice_visitados] = len(c_min)
                 A.append(c_min + [nuevo_movimiento])
                 f.append(calcular_f(c_min + [nuevo_movimiento],posicion_final))
-                print("AAAAAA")
+                
             
 def A_star(mapa,n):
     
+    # Definir posiciones iniciales y finales: 
     posicion_inicial = (0,0)
     posicion_final = (n-1,n-1)
     for i,fila in enumerate(mapa):
@@ -199,10 +205,10 @@ def A_star(mapa,n):
         mapa[0][0] = 3
     if posicion_final == (n-1,n-1):
         mapa[n-1][n-1] = 4
-
     print(f"Posicion inicial = {posicion_inicial}")
     print(f"Posicion final = {posicion_final}")
 
+    # Variables necesarias:
     visitados = [posicion_inicial] # Importa el orden
     g_visitados = [0] # Importa el orden
     A = [ [posicion_inicial] ] # Lista de listas (caminos), importa el orden
@@ -230,10 +236,11 @@ def A_star(mapa,n):
             f = [valor_f for indice, valor_f in enumerate(f) if indice not in indices_para_podar]
 
         else: # Si no es solución o es peor que la que ya tenemos
-            sucesores(c_min,mapa,visitados,g_visitados,A,f,n,posicion_final) # La función modificará las listas A, visitados y g_visitados
+            sucesores(c_min,mapa,visitados,g_visitados,A,f,n,posicion_final,f_sol) # La función modificará las listas A, visitados y g_visitados
     
 
-    return sol, f_sol
+    # print(f"Visitados = \n{visitados}")
+    return sol, f_sol,visitados
 
 
 # ---------------------------------------------------------------
@@ -255,26 +262,22 @@ def A_star(mapa,n):
 
 
 
-sol, f = A_star(M,len(M[0]))
+sol, f, visitados = A_star(M,len(M[0]))
 print(f"Solucion: {sol}")
 print(f"f = {f}")
-
-
+if dibujar_nodos_visitados:
+    for x,y in visitados:
+        M[x][y] = 5
 for x,y in sol[1:-1]:
     M[x][y] = 2
 
+x0,y0 = sol[0]
+M[x0][y0] = 3
+xn,yn = sol[-1]
+M[xn][yn] = 4
+
+
 M = np.array(M)
-
-
-
-
-
-
-
-
-
-
-
 
 
 # Dibujar
@@ -295,11 +298,14 @@ def draw_grid(grid):
             if grid[i][j] == 1:
                 color = BLACK
             elif grid[i][j] == 2:
-                color = MARKED_COLOR
+                # color = MARKED_COLOR
+                color = (100,0,0)
             elif grid[i][j] == 3:
                 color = MARKED_COLOR_START
             elif grid[i][j] == 4:
                 color = MARKED_COLOR_END
+            elif grid[i][j] == 5:
+                color = (173,216,230)
             else:
                 color = WHITE
             pygame.draw.rect(screen, color, (j * grid_size, i * grid_size, grid_size, grid_size))
