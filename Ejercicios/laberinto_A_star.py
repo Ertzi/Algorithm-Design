@@ -106,8 +106,6 @@ def generate_matrix():
 
 M = generate_matrix()
 
-print(M)
-
 
 
 
@@ -141,6 +139,19 @@ print(M)
 #     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4]]
 
 
+
+
+
+
+
+
+
+
+
+
+# ---------------------------------------------------------------
+# ---------------------INICIO ALGORITMO--------------------------
+# ---------------------------------------------------------------
 def heuristico(posicion,posicion_final):
     return abs(posicion_final[0]-posicion[0]) + abs(posicion_final[1]-posicion[1])
 
@@ -184,6 +195,14 @@ def A_star(mapa,n):
             elif valor == 4:
                 posicion_final = (i,j)
 
+    if posicion_inicial == (0,0):
+        mapa[0][0] = 3
+    if posicion_final == (n-1,n-1):
+        mapa[n-1][n-1] = 4
+
+    print(f"Posicion inicial = {posicion_inicial}")
+    print(f"Posicion final = {posicion_final}")
+
     visitados = [posicion_inicial] # Importa el orden
     g_visitados = [0] # Importa el orden
     A = [ [posicion_inicial] ] # Lista de listas (caminos), importa el orden
@@ -217,6 +236,25 @@ def A_star(mapa,n):
     return sol, f_sol
 
 
+# ---------------------------------------------------------------
+# ----------------------FINAL ALGORITMO--------------------------
+# ---------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 sol, f = A_star(M,len(M[0]))
 print(f"Solucion: {sol}")
 print(f"f = {f}")
@@ -225,9 +263,8 @@ print(f"f = {f}")
 for x,y in sol[1:-1]:
     M[x][y] = 2
 
-
 M = np.array(M)
-print(M)
+
 
 
 
@@ -245,7 +282,7 @@ print(M)
 # Inicializar Pygame
 pygame.init()
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Dibujar Cuadrícula")
+pygame.display.set_caption(f"Solucion, pasos necesarios = {f}")
 
 # Colores
 # Color de fondo de la cuadrícula
@@ -268,7 +305,7 @@ def draw_grid(grid):
             pygame.draw.rect(screen, color, (j * grid_size, i * grid_size, grid_size, grid_size))
             pygame.draw.rect(screen, GRID_COLOR, (j * grid_size, i * grid_size, grid_size, grid_size), 1)
 
-def main():
+def dibujar_solucion():
     running = True
 
     while running:
@@ -281,5 +318,4 @@ def main():
 
     pygame.quit()
 
-if __name__ == "__main__":
-    main()
+dibujar_solucion()
