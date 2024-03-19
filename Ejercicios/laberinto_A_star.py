@@ -265,16 +265,14 @@ def A_star(mapa,n):
 sol, f, visitados = A_star(M,len(M[0]))
 print(f"Solucion: {sol}")
 print(f"f = {f}")
-if dibujar_nodos_visitados:
-    for x,y in visitados:
-        M[x][y] = 5
-for x,y in sol[1:-1]:
-    M[x][y] = 2
+if not dibujar_nodos_visitados:
+    for x,y in sol[1:-1]:
+        M[x][y] = 2
 
-x0,y0 = sol[0]
-M[x0][y0] = 3
-xn,yn = sol[-1]
-M[xn][yn] = 4
+    x0,y0 = sol[0]
+    M[x0][y0] = 3
+    xn,yn = sol[-1]
+    M[xn][yn] = 4
 
 
 M = np.array(M)
@@ -287,12 +285,24 @@ pygame.init()
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption(f"Solucion, pasos necesarios = {f}")
 
-# Colores
-# Color de fondo de la cuadrícula
-MARKED_COLOR = (65, 43,21)     # Color para las posiciones marcadas
 
-def draw_grid(grid):
+def draw_grid(grid,counter):
     screen.fill(GRID_COLOR)  # Rellenar el fondo con el color de la cuadrícula
+
+    if dibujar_nodos_visitados and counter[0] < len(visitados): 
+        x,y = visitados[counter[0]]
+        grid[x][y] = 5
+        counter[0] += 1
+        x0,y0 = sol[0]
+        grid[x0][y0] = 3
+    if dibujar_nodos_visitados and counter[0] >= len(visitados):
+        for x,y in sol[1:-1]:
+            grid[x][y] = 2
+        x0,y0 = sol[0]
+        grid[x0][y0] = 3
+        xn,yn = sol[-1]
+        grid[xn][yn] = 4
+
     for i in range(n):
         for j in range(n):
             if grid[i][j] == 1:
@@ -313,13 +323,14 @@ def draw_grid(grid):
 
 def dibujar_solucion():
     running = True
+    counter = [0]
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-        draw_grid(M)
+        draw_grid(M,counter)
         pygame.display.flip()
 
     pygame.quit()
