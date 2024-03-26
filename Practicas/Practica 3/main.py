@@ -6,8 +6,8 @@ import time
 # Algunas variables:
 
 # Tamaño de cada cuadricula
-grid_size = 20*5
-n = 5 # Tamaño del tablero n x n
+grid_size = 20*2
+n = 15 # Tamaño del tablero n x n
 cadencia_entre_turnos = 0.3 # segundos 
 
 grid_width, grid_height = n * grid_size, n * grid_size
@@ -105,10 +105,10 @@ class PillaPilla:
                     turno_anterior = self.posicion_perseguidor
                     self.posicion_perseguidor = self.posicion_perseguidor + np.array((dx,dy))
                     valor = self.minmax(turno_perseguidor = False, profundidad=profundidad-1)
-                    print("--------------------")
-                    print(f"Turno min, valor = {valor}, profundidad = {profundidad}")
-                    print(self)
-                    print("--------------------")
+                    # print("--------------------")
+                    # print(f"Turno min, valor = {valor}, profundidad = {profundidad}")
+                    # print(self)
+                    # print("--------------------")
                     if valor < min:
                         min = valor
                         if profundidad == self.profundidad_minmax:
@@ -128,10 +128,10 @@ class PillaPilla:
                     turno_anterior = self.posicion_perseguido
                     self.posicion_perseguido = self.posicion_perseguido + np.array((dx,dy))
                     valor = self.minmax(turno_perseguidor = True, profundidad=profundidad-1)
-                    print("--------------------")
-                    print(f"Turno max, valor = {valor}, profundidad = {profundidad}")
-                    print(self)
-                    print("--------------------") 
+                    # print("--------------------")
+                    # print(f"Turno max, valor = {valor}, profundidad = {profundidad}")
+                    # print(self)
+                    # print("--------------------") 
                     if valor > max:
                         max = valor
                         if profundidad == self.profundidad_minmax:
@@ -147,7 +147,7 @@ class PillaPilla:
         """
         Aquí se hará el juego. Es decir, se moveran las posiciones de los jugadores en base al turno
         """
-        if self.modo_de_juego == "perseguidor":
+        if self.modo_de_juego == "perseguidor" and distancia_manhattan(self) != 1:
             if self.turno == "perseguidor": # Turno del jugador (se gestiona directamente en pygame)
                 pass
             else:
@@ -159,8 +159,10 @@ class PillaPilla:
 
         elif self.modo_de_juego == "perseguido":
             pass
-        else:
+        elif self.modo_de_juego == "maquina vs maquina":
             pass
+        elif distancia_manhattan(self) == 1:
+            self.juego_terminado = True
             
 class Botoia:
     def __init__(self, x, y, width, height, color, text, font_size = 24):
@@ -392,13 +394,34 @@ def main():
             que_hacer = "menu"
 
         elif que_hacer == "juego":
+            # mapa = np.array(
+            #     [[0, 0, 0, 0, 0],
+            #      [0, 1, 0, 1, 0],
+            #      [0, 1, 1, 1, 0],
+            #      [0, 0, 0, 0, 0],
+            #      [0, 0, 1, 0, 0]
+            #      ])
+
             mapa = np.array(
-                [[0, 0, 0, 0, 0],
-                 [0, 1, 0, 1, 0],
-                 [0, 1, 1, 1, 0],
-                 [0, 0, 0, 0, 0],
-                 [0, 0, 1, 0, 0]
-                 ])
+                [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0],
+                 [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0],
+                 [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0],
+
+                 [0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0],
+                 [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+                 
+                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+                 [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+            )
             p1 = PillaPilla("perseguidor",distancia_manhattan,2,mapa)
             que_hacer = juego(p1)
 
