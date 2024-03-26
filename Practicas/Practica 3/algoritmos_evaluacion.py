@@ -1,6 +1,21 @@
 import pygame
 import numpy as np
 
+
+def distancia_manhattan(pilla_pilla):
+    return abs(pilla_pilla.posicion_perseguidor[0]-pilla_pilla.posicion_perseguido[0]) + abs(pilla_pilla.posicion_perseguidor[1]-pilla_pilla.posicion_perseguido[1])
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------
 # ------------------INICIO ALGORITMO A ESTRELLA------------------
 # ---------------------------------------------------------------
